@@ -1,0 +1,12 @@
+event_record_id,timestamp,event_id,channel,host,user,domain,src_ip,logon_type,status,sub_status,outcome
+40118,2026-09-14T07:51:12-03:00,4624,Security,WS-021,ana.pereira,LAB,127.0.0.1,2,,,success
+71503,2026-09-14T10:58:40Z,4624,Security,WS-033,bruno.costa,LAB,127.0.0.1,2,,,success
+58211,2026-09-14T08:02:10-03:00,4625,Security,WS-017,carla.mendes,LAB,127.0.0.1,2,0xC000006D,0xC000006A,failure
+58212,2026-09-14T08:02:25-03:00,4625,Security,WS-017,carla.mendes,LAB,127.0.0.1,2,0xC000006D,0xC000006A,failure
+58213,2026-09-14T08:02:41-03:00,4625,Security,WS-017,carla.mendes,LAB,127.0.0.1,2,0xC000006D,0xC000006A,failure
+58214,2026-09-14T08:02:58-03:00,4624,Security,WS-017,carla.mendes,LAB,127.0.0.1,2,,,success
+58214,2026-09-14T08:02:58-03:00,4624,Security,WS-017,carla.mendes,LAB,127.0.0.1,2,,,success
+902312,2026-09-14T08:10:03-03:00,4624,Security,SRV-FILE-01,carla.mendes,LAB,-,3,,,success
+33891,2026-09-14 08:15:00,4624,Security,WS-044,daniel.rocha,LAB,127.0.0.1,2,,,success
+902313,2026-09-14T08:31:09-03:00,4624,Security,SRV-FILE-01,ana.pereira,LAB,10.20.1.21,3,,,success
+902314,2026-09-14T09:04:55-03:00,4624,Security,SRV-FILE-01,bruno.costa,LAB,10.20.1.33,3,,,success

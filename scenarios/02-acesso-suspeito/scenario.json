@@ -1,0 +1,18 @@
+{
+  "title": "Cenário 2 – Acesso suspeito",
+  "description": "Sequência de falhas de logon remoto seguida de sucesso para a mesma conta, origem e servidor.",
+  "input": "events.csv",
+  "expected": {
+    "records": {
+      "read": 18,
+      "valid": 18,
+      "rejected": 0,
+      "duplicates_removed": 0,
+      "possible_duplicates_kept": 0
+    },
+    "alerts": {
+      "AUTH-001": 1,
+      "AUTH-003": 1
+    }
+  }
+}

@@ -1,0 +1,29 @@
+# Configuração das regras do Security Log Analysis Lab.
+#
+# ATENÇÃO: todos os valores abaixo são DIDÁTICOS, escolhidos para que os
+# cenários fictícios de demonstração sejam fáceis de entender. Eles NÃO são
+# recomendados para nenhum ambiente real. Em produção, os limiares precisam
+# ser calibrados com dados do próprio ambiente (veja docs/calibracao.md).
+#
+# Todos os campos são obrigatórios. Campos desconhecidos geram erro, para
+# evitar que um erro de digitação passe despercebido.
+
+display:
+  # Fuso usado para EXIBIR horários no relatório. Os dados são sempre
+  # processados em UTC; o relatório mostra os dois.
+  timezone_label: "Horário de Brasília"
+  utc_offset: "-03:00"
+
+rules:
+  AUTH-001:
+    # Falhas repetidas de autenticação (evento 4625) com a mesma
+    # conta + domínio + IP de origem + host de registro.
+    enabled: true
+    threshold: 3         # EXERCÍCIO DE CALIBRAÇÃO (valor didático)
+    window_minutes: 10   # janela móvel, limite inclusivo (inteiro, 1 a 1440)
+
+  AUTH-003:
+    # Sucesso (evento 4624) após uma sequência que atende à AUTH-001,
+    # com a mesma chave de correlação. Depende de AUTH-001 habilitada.
+    enabled: true
+    success_within_minutes: 30  # tempo máximo após a última falha (inclusivo)

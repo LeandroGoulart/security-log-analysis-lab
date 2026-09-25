@@ -1,0 +1,28 @@
+# --- Dados reais e saídas geradas: NUNCA versionar ---------------------------
+# Logs reais contêm contas, hosts e IPs internos. Saídas (CSV, HTML, JSON)
+# reproduzem esses dados. Dashboards e capturas de tela também.
+data/raw/
+data/processed/
+output/
+alerts/
+reports/
+*.evtx
+*.pbix
+dashboards/private/
+screenshots/private/
+
+# Fichas de investigação preenchidas (o modelo em docs/ é versionado)
+fichas/
+
+# --- Python --------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+*.egg-info/
+
+# --- Editores / SO -------------------------------------------------------------
+.idea/
+.DS_Store
+Thumbs.db

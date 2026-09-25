@@ -1,0 +1,10 @@
+[project]
+name = "security-log-analysis-lab"
+version = "0.1.0"
+description = "Laboratório de investigação de autenticação Windows (4624/4625) para estudo de SOC/Blue Team"
+requires-python = ">=3.10"
+dependencies = ["PyYAML>=6.0"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = [".", "tests"]
