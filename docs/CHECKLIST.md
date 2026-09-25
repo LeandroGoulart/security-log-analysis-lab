@@ -27,6 +27,7 @@ Esses itens ficam como resumo, não como tarefas abertas. As decisões sobre dup
 - Instalação editável no `.venv`; 87 testes passaram e `authlab.exe demo --strict` conferiu os cenários.
 - Wheel instalado num ambiente temporário fora do checkout; `authlab demo --strict` encontrou os recursos empacotados.
 - README e instruções atualizados com o fluxo de instalação real.
+- Commit `5fe3a17` publicado em `origin/main`; hash remoto confirmado igual ao local. `.vscode/settings.json` permaneceu ignorado.
 
 ## Próximo incremento
 
@@ -49,7 +50,7 @@ Esses itens estão fora da primeira versão; não devem ser descritos como imple
 |---|---|---|---|
 | 2026-09-25 | Inspeção integral, correção de vínculo AUTH-003, convenção de GitHub e revisão do checklist. | 87 testes passaram e a demo estrita conferiu os três cenários no Windows com Python 3.13; instalação repetida no `.venv`. | Publicar o marco v1. |
 | 2026-09-25 | Marco v1 publicado em `origin/main` como `7b0928b`. | `git ls-remote` confirmou o mesmo hash; workspace sincronizado, com `.vscode/settings.json` somente local. | Preparar o próximo incremento: layout Python instalável `src/`. |
-| 2026-09-25 | Aplicação migrada para `src/`, CLI instalável, recursos incluídos no wheel e rejeições minimizadas. | 87 testes passaram; demo estrita passou no venv editável e no wheel instalado fora do checkout; links Markdown válidos. | Publicar este incremento em uma etapa separada e então escolher a próxima melhoria. |
+| 2026-09-25 | Aplicação instalável e proteções de dados publicadas como `5fe3a17`. | 87 testes passaram; demo estrita passou no venv editável e no wheel instalado fora do checkout; `origin/main` confirmado no mesmo hash. | Escolher a próxima melhoria do roadmap em um incremento pequeno. |
 
 ## Como atualizar este checklist
 
