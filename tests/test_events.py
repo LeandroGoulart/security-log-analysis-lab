@@ -134,5 +134,7 @@ def test_missing_column_is_an_input_error(tmp_path):
 
 
 def test_missing_file_is_an_input_error(tmp_path):
-    with pytest.raises(InputError, match="não encontrado"):
-        read_events(tmp_path / "nao-existe.csv")
+    path = tmp_path / "nao-existe.csv"
+    with pytest.raises(InputError, match="não encontrado") as error:
+        read_events(path)
+    assert str(tmp_path) not in str(error.value)

@@ -1,6 +1,6 @@
 # Especificação das regras (v1)
 
-Parâmetros em [`config/rules.yaml`](../config/rules.yaml). Os valores padrão (5 falhas, 10 min, 30 min) são **didáticos**.
+Parâmetros padrão empacotados em [`src/authlab/resources/config/rules.yaml`](../src/authlab/resources/config/rules.yaml). Os valores padrão (5 falhas, 10 min, 30 min) são **didáticos**.
 
 ## Chave de correlação
 

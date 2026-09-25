@@ -6,7 +6,7 @@ import pytest
 
 from authlab.config import ConfigError, load_config, parse_config
 
-from conftest import ROOT
+from conftest import RESOURCES
 
 VALID = {
     "display": {"timezone_label": "Teste", "utc_offset": "-03:00"},
@@ -30,7 +30,7 @@ def mutate(path, value):
 
 
 def test_shipped_config_is_valid():
-    cfg = load_config(ROOT / "config" / "rules.yaml")
+    cfg = load_config(RESOURCES / "config" / "rules.yaml")
     assert cfg.auth001.threshold >= 2
 
 

@@ -45,7 +45,7 @@ Formato **próprio do projeto**. Ele **não** é o CSV exportado pelo Event View
 | IP informado, mas inválido | Linha rejeitada (problema de qualidade, diferente de ausência) |
 | IP ausente | Linha **mantida**, `src_ip_state=missing`, não elegível para correlação |
 
-Toda linha lida termina em **exatamente um** destino: evento válido, `rejected.csv` (com motivo e número da linha) ou `duplicates.csv` (com referência à primeira ocorrência). Nada é descartado em silêncio.
+Toda linha lida termina em **exatamente um** destino: evento válido, `rejected.csv` (com motivo e número da linha) ou `duplicates.csv` (com referência à primeira ocorrência). `rejected.csv` não copia os valores da linha, para evitar replicar dados inválidos e potencialmente sensíveis. Nada é descartado em silêncio.
 
 ## Normalização
 

@@ -3,13 +3,25 @@
 # reproduzem esses dados. Dashboards e capturas de tela também.
 data/raw/
 data/processed/
+data/real/
+data/private/
+inputs/
+private-data/
+investigations/
 output/
 alerts/
 reports/
 *.evtx
+*.etl
+*.log
 *.pbix
+*.pfx
+*.p12
 dashboards/private/
 screenshots/private/
+.env
+.env.*
+!.env.example
 
 # Fichas de investigação preenchidas (o modelo em docs/ é versionado)
 fichas/
@@ -21,8 +33,11 @@ __pycache__/
 venv/
 .pytest_cache/
 *.egg-info/
+build/
+dist/
 
 # --- Editores / SO -------------------------------------------------------------
 .idea/
+.vscode/
 .DS_Store
 Thumbs.db

@@ -8,6 +8,7 @@ from authlab.config import parse_config
 from authlab.events import REQUIRED_COLUMNS
 
 ROOT = Path(__file__).resolve().parent.parent
+RESOURCES = ROOT / "src" / "authlab" / "resources"
 T0 = datetime(2026, 9, 10, 12, 0, 0, tzinfo=timezone.utc)
 
 

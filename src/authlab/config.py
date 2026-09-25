@@ -145,11 +145,13 @@ def parse_config(data, source_path: str = "") -> Config:
 def load_config(path: str | Path) -> Config:
     path = Path(path)
     if not path.is_file():
-        raise ConfigError(f"Arquivo de configuração não encontrado: {path}")
+        raise ConfigError(f"Arquivo de configuração não encontrado: {path.name}")
     try:
         data = yaml.safe_load(path.read_text(encoding="utf-8"))
+    except OSError as exc:
+        raise ConfigError(f"Não foi possível ler {path.name}: {exc.strerror or 'erro de leitura'}") from None
     except yaml.YAMLError as exc:
-        raise ConfigError(f"{path} não é um YAML válido: {exc}") from exc
+        raise ConfigError(f"{path.name} não é um YAML válido: {exc}") from exc
     # Caminho exibido no relatório: relativo, para não expor a estrutura de pastas local.
     try:
         shown = path.resolve().relative_to(Path.cwd().resolve()).as_posix()

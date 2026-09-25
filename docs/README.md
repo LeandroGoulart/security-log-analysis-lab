@@ -27,7 +27,7 @@ Uma falha `4625` não significa necessariamente “senha errada”. Os campos `s
 5. Cada alerta aponta para os registros que o sustentam.
 6. O programa grava CSVs e um relatório HTML local, que pode ser aberto no navegador sem iniciar um servidor.
 
-O fluxo está implementado na v1 (`python -m authlab demo`; veja o [README principal](../README.md)). O [checklist](CHECKLIST.md) registra o que foi verificado e o que falta.
+O fluxo está implementado na v1 (`authlab demo`; veja o [README principal](../README.md)). O [checklist](CHECKLIST.md) registra o que foi verificado e o que falta.
 
 ## Regras do MVP
 
@@ -36,7 +36,7 @@ O MVP é a primeira versão pequena que permite percorrer o fluxo completo com d
 - **AUTH-001 — falhas repetidas:** identifica ao menos o limite configurado de eventos `4625` em uma janela móvel, correlacionados por domínio, conta, IP válido e host que registrou o evento.
 - **AUTH-003 — sucesso após falhas:** identifica um `4624` posterior à sequência que disparou AUTH-001, com a mesma chave de correlação e dentro do intervalo configurado.
 
-Os valores iniciais são didáticos e ficam em `config/rules.yaml`; não devem ser tratados como recomendação para um ambiente real. A especificação vigente está em [regras.md](regras.md); o planejamento original, em [MVP e regras](MVP-E-REGRAS.md).
+Os valores iniciais são didáticos e ficam em `src/authlab/resources/config/rules.yaml`; não devem ser tratados como recomendação para um ambiente real. A especificação vigente está em [regras.md](regras.md); o planejamento original, em [MVP e regras](MVP-E-REGRAS.md).
 
 ## Vocabulário rápido
 
@@ -59,6 +59,6 @@ O CSV didático não é um exportador/importador genérico do Event Viewer. Supo
 - [Exercício de calibração](calibracao.md) · [Decisões e premissas](decisoes.md) · [Referências](referencias.md)
 - [Padrão simples para commits e comentários no GitHub](PADRAO-GITHUB.md)
 - [MVP e regras (planejamento original)](MVP-E-REGRAS.md)
-- [Cenários didáticos](../scenarios/README.md)
+- [Cenários didáticos](../src/authlab/resources/scenarios/README.md)
 - [Checklist e histórico de andamento](CHECKLIST.md)
 - [Descrição dos dados fictícios existentes](../data/samples/README.md)

@@ -16,7 +16,7 @@ A AUTH-001 exige pelo menos 5 falhas com a mesma chave em 10 minutos. Houve 3. A
 ## Hipóteses
 
 | Hipótese | A favor | Contra |
-|---|---|---|
+| --- | --- | --- |
 | Erro de digitação | poucas falhas, curtíssimo intervalo, logon local na estação da própria pessoa, sucesso logo depois | nenhum |
 | Tentativa de adivinhar a senha | nenhum sinal: volume baixo, logon local | exigiria acesso físico à estação |
 
@@ -33,4 +33,4 @@ A ação útil deste cenário é de **qualidade de dados**: corrigir a origem da
 ## Limitações
 
 - A ferramenta não sabe que `WS-017` é da Carla; essa informação veio do inventário.
-- Com limiar 3 ([`docs/calibracao.md`](../../docs/calibracao.md)), este cenário gera AUTH-001 e AUTH-003. A regra estaria funcionando, mas o alerta seria ruído. Esse é o custo de um limiar baixo.
+- Com limiar 3 ([`docs/calibracao.md`](../../../../../docs/calibracao.md)), este cenário gera AUTH-001 e AUTH-003. A regra estaria funcionando, mas o alerta seria ruído. Esse é o custo de um limiar baixo.

@@ -13,12 +13,12 @@ Terça-feira, 15/09/2026. O servidor `SRV-RDP-01` é um servidor de acesso remot
 5. O que os eventos **provam** e o que **não provam**? O IP `203.0.113.50` identifica quem estava do outro lado?
 6. Quais informações você pediria antes de concluir? A quem?
 7. Qual prioridade você daria, e por quê?
-8. Com limiar 15 ([`docs/calibracao.md`](../../docs/calibracao.md)), o que acontece com este cenário? O que isso ensina sobre limiares altos?
+8. Com limiar 15 ([`docs/calibracao.md`](../../../../../docs/calibracao.md)), o que acontece com este cenário? O que isso ensina sobre limiares altos?
 
 ## Resultado esperado (configuração padrão)
 
 | Indicador | Valor |
-|---|---|
+| --- | --- |
 | Registros lidos / válidos | 18 / 18 |
 | AUTH-001 | 1 alerta: 12 falhas de `LAB\joao.silva` a partir de `203.0.113.50` em `SRV-RDP-01` |
 | AUTH-003 | 1 alerta vinculado: sucesso às 21:54:08 (horário de Brasília), cerca de 1 min após a última falha |

@@ -18,11 +18,14 @@ Registro das escolhas feitas na v1, para que possam ser questionadas e revistas.
 | D12 | Sem campo de severidade automática | Prioridade é decisão do analista, justificada na ficha | Severidade fixa por regra |
 | D13 | Interpretar só códigos da tabela oficial do 4625 | Não inventar significados | Tabelas de terceiros |
 | D14 | Células CSV começando com `= + - @` recebem `'` na frente | Evita injeção de fórmulas ao abrir no Excel | Gravar sem tratamento |
-| D15 | Pacote na raiz (`python -m authlab`), sem instalação do pacote | Um comando para iniciantes, sem empacotamento | `pip install -e .` |
+| D15 | Pacote na raiz (`python -m authlab`), sem instalação do pacote (decisão original, substituída pela D20) | Um comando para iniciantes, sem empacotamento | `pip install -e .` |
 | D16 | Dependências: PyYAML (execução) e pytest (testes) | Poucas dependências, instalação simples | pandas, Jinja2 |
 | D17 | Caminho da configuração exibido de forma relativa no relatório | Não expor a estrutura de pastas do computador | Caminho absoluto |
 | D18 | IP informado mas inválido → linha rejeitada; IP vazio ou `-` → ausente (não elegível) | Ausência é comum no Windows; valor malformado é problema de qualidade (alinhado a [MVP-E-REGRAS.md](MVP-E-REGRAS.md)) | Manter a linha como não elegível |
 | D19 | Desempate de timestamps iguais por EventRecordID (quando houver) e depois `event_uid` | Reproduzível mesmo se as linhas forem reordenadas | Ordem física das linhas |
+| D20 | Aplicação em `src/authlab`, com comando `authlab` e configuração/cenários como recursos do pacote | Instalação consistente de checkout editável ou wheel sem depender da pasta atual | Resolver recursos pela raiz do repositório |
+| D21 | Erros/rejeições não repetem valores brutos; `rejected.csv` mantém só arquivo, linha e motivo | Evitar que uma linha malformada replique conteúdo sensível em mais um artefato | Copiar toda a linha para a saída de rejeições |
+| D22 | `.gitignore` cobre entradas locais, relatórios e configurações do editor; saídas válidas ainda podem conter dados sensíveis | Reduzir publicação acidental sem alegar anonimização | Ignorar genericamente todos os CSVs, incluindo os samples fictícios |
 
 ## Divergências em relação ao planejamento ([MVP-E-REGRAS.md](MVP-E-REGRAS.md))
 
@@ -35,7 +38,7 @@ O documento de planejamento foi escrito antes da implementação. Onde a impleme
 | Desempate de timestamps iguais | `event_uid` | EventRecordID (quando houver) e depois `event_uid` | EventRecordID reflete a ordem de gravação dentro do mesmo log |
 | `channel` | Contexto do log, sem valor fixo | Precisa ser `Security` | 4624/4625 são eventos do log de Segurança |
 
-Se preferir o comportamento planejado para duplicatas, a mudança fica concentrada em `authlab/events.py` (`read_events`) e nos testes `test_identical_rows_without_record_id_are_kept_and_counted` e `test_record_id_conflict_is_rejected`.
+Se preferir o comportamento planejado para duplicatas, a mudança fica concentrada em `src/authlab/events.py` (`read_events`) e nos testes `test_identical_rows_without_record_id_are_kept_and_counted` e `test_record_id_conflict_is_rejected`.
 
 ## Premissas
 

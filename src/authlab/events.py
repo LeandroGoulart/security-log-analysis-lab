@@ -124,10 +124,10 @@ def parse_timestamp(value: str) -> datetime:
     try:
         dt = datetime.fromisoformat(text)
     except ValueError:
-        raise ValueError(f"timestamp em formato inválido: {value!r} (use ISO 8601)") from None
+        raise ValueError("timestamp em formato inválido (use ISO 8601)") from None
     if dt.tzinfo is None or dt.utcoffset() is None:
         raise ValueError(
-            f"timestamp sem fuso horário: {value!r} (inclua Z ou um deslocamento como -03:00)"
+            "timestamp sem fuso horário (inclua Z ou um deslocamento como -03:00)"
         )
     return dt.astimezone(timezone.utc)
 
@@ -179,7 +179,7 @@ def _validate_row(raw: dict, source_file: str, line: int):
     event_id = None
     if v["event_id"] is not None:
         if not v["event_id"].isdigit():
-            reasons.append(f"event_id não numérico: {v['event_id']!r}")
+            reasons.append("event_id não numérico (use 4624 ou 4625)")
         else:
             event_id = int(v["event_id"])
             if event_id not in SUPPORTED_EVENTS:
@@ -189,30 +189,30 @@ def _validate_row(raw: dict, source_file: str, line: int):
     channel = v["channel"]
     if channel is not None:
         if channel.casefold() != "security":
-            reasons.append(f"channel inesperado para 4624/4625: {channel!r} (esperado: Security)")
+            reasons.append("channel inesperado para 4624/4625 (esperado: Security)")
         channel = "Security"
 
     outcome = v["outcome"].lower() if v["outcome"] else None
     if outcome is not None and outcome not in ("success", "failure"):
-        reasons.append(f"outcome inválido: {v['outcome']!r} (use success ou failure)")
+        reasons.append("outcome inválido (use success ou failure)")
         outcome = None
     if event_id is not None and outcome is not None and SUPPORTED_EVENTS[event_id] != outcome:
         reasons.append(
             f"inconsistência: event_id {event_id} exige outcome={SUPPORTED_EVENTS[event_id]}, "
-            f"recebido {outcome}"
+            "resultado incompatível"
         )
 
     record_id = None
     if v["event_record_id"] is not None:
         if not v["event_record_id"].isdigit() or int(v["event_record_id"]) == 0:
-            reasons.append(f"event_record_id deve ser inteiro positivo: {v['event_record_id']!r}")
+            reasons.append("event_record_id deve ser um inteiro positivo")
         else:
             record_id = int(v["event_record_id"])
 
     logon_type = None
     if v["logon_type"] is not None:
         if not v["logon_type"].isdigit():
-            reasons.append(f"logon_type não numérico: {v['logon_type']!r}")
+            reasons.append("logon_type deve ser numérico")
         else:
             logon_type = int(v["logon_type"])
 
@@ -221,7 +221,7 @@ def _validate_row(raw: dict, source_file: str, line: int):
         try:
             codes[name] = normalize_hex(v[name])
         except ValueError:
-            reasons.append(f"{name} fora do formato hexadecimal 0x...: {v[name]!r}")
+            reasons.append(f"{name} fora do formato hexadecimal 0x...")
             codes[name] = None
     if event_id == 4624 and any(c not in (None, "0x0") for c in codes.values()):
         reasons.append("inconsistência: evento 4624 (sucesso) com código de falha em status/sub_status")
@@ -230,7 +230,7 @@ def _validate_row(raw: dict, source_file: str, line: int):
 
     src_ip, ip_state = normalize_ip(v["src_ip"])
     if ip_state == "invalid":
-        reasons.append(f"src_ip informado não é um endereço IP válido: {v['src_ip']!r}")
+        reasons.append("src_ip informado não é um endereço IP válido")
 
     data = dict(
         event_record_id=record_id,
@@ -273,20 +273,26 @@ def _fingerprint(d: dict) -> tuple:
 def read_events(path: str | Path, display_name: str | None = None) -> ParseResult:
     path = Path(path)
     if not path.is_file():
-        raise InputError(f"Arquivo de entrada não encontrado: {path}")
+        raise InputError(f"Arquivo de entrada não encontrado: {path.name}")
     source_file = display_name or path.name
     result = ParseResult(source_file=source_file)
 
-    with path.open("r", encoding="utf-8-sig", newline="") as fh:
+    try:
+        input_file = path.open("r", encoding="utf-8-sig", newline="")
+    except OSError as exc:
+        reason = exc.strerror or "erro de leitura"
+        raise InputError(f"Não foi possível ler {path.name}: {reason}") from None
+
+    with input_file as fh:
         reader = csv.DictReader(fh)
         if not reader.fieldnames:
-            raise InputError(f"{path} está vazio ou não tem cabeçalho.")
+            raise InputError(f"{path.name} está vazio ou não tem cabeçalho.")
         header = [h.strip() for h in reader.fieldnames]
         reader.fieldnames = header
         missing = [c for c in REQUIRED_COLUMNS if c not in header]
         if missing:
             raise InputError(
-                f"{path}: colunas obrigatórias ausentes no cabeçalho: {', '.join(missing)}. "
+                f"{path.name}: colunas obrigatórias ausentes no cabeçalho: {', '.join(missing)}. "
                 "Veja docs/formato-csv.md."
             )
         result.extra_columns = [c for c in header if c not in REQUIRED_COLUMNS]

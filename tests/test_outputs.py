@@ -10,7 +10,7 @@ from authlab.__main__ import compare_expected, load_scenarios, main
 from authlab.config import load_config
 from authlab.pipeline import analyze, safe_cell, summary_dict, write_outputs
 
-from conftest import ROOT, failures, make_config, row
+from conftest import RESOURCES, ROOT, failures, make_config, row
 
 SCENARIOS = load_scenarios()
 
@@ -57,15 +57,20 @@ def test_evidence_csv_links_alerts_to_events(write_csv, tmp_path):
 
 
 def test_rejections_are_written_with_reason_and_line(write_csv, tmp_path):
-    rows = [row(), row(timestamp="sem data")]
+    private_user = "user-private-example"
+    rows = [row(), row(timestamp="private-invalid-timestamp", user=private_user)]
     paths = write_outputs(analyze(write_csv(rows), make_config()), tmp_path / "out")
     [rej] = read_csv(paths["rejected"])
     assert rej["source_line"] == "3" and "formato inválido" in rej["reasons"]
+    rejected_text = paths["rejected"].read_text(encoding="utf-8-sig")
+    assert private_user not in rejected_text
+    assert "private-invalid-timestamp" not in rejected_text
+    assert set(rej) == {"source_file", "source_line", "reasons"}
 
 
 @pytest.mark.parametrize("folder,meta", SCENARIOS, ids=[f.name for f, _ in SCENARIOS])
 def test_scenarios_match_expected_results(folder, meta, tmp_path):
-    cfg = load_config(ROOT / "config" / "rules.yaml")
+    cfg = load_config(RESOURCES / "config" / "rules.yaml")
     result = analyze(folder / meta["input"], cfg, meta["title"])
     write_outputs(result, tmp_path / folder.name)
     assert compare_expected(summary_dict(result), meta["expected"]) == []
@@ -95,7 +100,7 @@ def test_invalid_config_returns_error_code(tmp_path, capsys):
 
 def test_calibration_changes_results(tmp_path):
     """Limiar 3 passa a alertar no cenário de erro de digitação (custo: ruído)."""
-    folder = ROOT / "scenarios" / "01-erro-digitacao"
+    folder = RESOURCES / "scenarios" / "01-erro-digitacao"
     cfg = load_config(ROOT / "config" / "exercicios" / "limiar-3.yaml")
     result = analyze(folder / "events.csv", cfg)
     assert result.alerts_by_rule() == {"AUTH-001": 1, "AUTH-003": 1}
@@ -104,6 +109,6 @@ def test_calibration_changes_results(tmp_path):
 def test_exploratory_sample_documents_v1_coverage():
     """data/samples/auth_events.csv: a v1 detecta força bruta, mas não spraying/fora de horário."""
     result = analyze(ROOT / "data" / "samples" / "auth_events.csv",
-                     load_config(ROOT / "config" / "rules.yaml"))
+                     load_config(RESOURCES / "config" / "rules.yaml"))
     assert result.alerts_by_rule() == {"AUTH-001": 2, "AUTH-003": 1}
     assert {a.key.user for a in result.alerts} == {"maria.souza", "joao.silva"}

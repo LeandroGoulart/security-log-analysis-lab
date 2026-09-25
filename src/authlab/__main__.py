@@ -18,9 +18,10 @@ from .events import InputError
 from .pipeline import analyze, summary_dict, write_outputs
 from .report import render_index
 
-ROOT = Path(__file__).resolve().parent.parent
-DEFAULT_CONFIG = ROOT / "config" / "rules.yaml"
-SCENARIOS_DIR = ROOT / "scenarios"
+PACKAGE_ROOT = Path(__file__).resolve().parent
+RESOURCES_DIR = PACKAGE_ROOT / "resources"
+DEFAULT_CONFIG = RESOURCES_DIR / "config" / "rules.yaml"
+SCENARIOS_DIR = RESOURCES_DIR / "scenarios"
 
 
 def _print_summary(summary: dict) -> None:
@@ -34,7 +35,8 @@ def _print_summary(summary: dict) -> None:
         print(f"    {s['status']}")
 
 
-def load_scenarios(directory: Path = SCENARIOS_DIR) -> list[tuple[Path, dict]]:
+def load_scenarios(directory: Path | None = None) -> list[tuple[Path, dict]]:
+    directory = directory or SCENARIOS_DIR
     items = []
     for meta_path in sorted(directory.glob("*/scenario.json")):
         items.append((meta_path.parent, json.loads(meta_path.read_text(encoding="utf-8"))))
@@ -105,7 +107,7 @@ def cmd_analyze(args) -> int:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="python -m authlab",
+        prog="authlab",
         description="Laboratório de investigação de autenticação Windows (4624/4625).",
     )
     sub = parser.add_subparsers(dest="command", required=True)

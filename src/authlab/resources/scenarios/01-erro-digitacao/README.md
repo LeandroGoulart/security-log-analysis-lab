@@ -13,12 +13,12 @@ O arquivo foi montado à mão por outra pessoa da equipe, e ela avisou que "pode
 3. Por que a AUTH-001 não disparou? O que teria de ser diferente para disparar?
 4. Um evento de sucesso não foi avaliado pela AUTH-003. Qual e por quê? Isso muda a sua conclusão?
 5. "Nenhum alerta" significa "nada aconteceu"? O que o relatório diz sobre a cobertura?
-6. Rode o exercício de calibração com limiar 3 ([`docs/calibracao.md`](../../docs/calibracao.md)). O alerta que aparece é útil ou é ruído? Qual o custo de manter esse limiar em um ambiente com centenas de usuários?
+6. Rode o exercício de calibração com limiar 3 ([`docs/calibracao.md`](../../../../../docs/calibracao.md)). O alerta que aparece é útil ou é ruído? Qual o custo de manter esse limiar em um ambiente com centenas de usuários?
 
 ## Resultado esperado (configuração padrão)
 
 | Indicador | Valor |
-|---|---|
+| --- | --- |
 | Registros lidos | 11 |
 | Válidos | 9 |
 | Rejeitados | 1 (linha 10: timestamp sem fuso) |

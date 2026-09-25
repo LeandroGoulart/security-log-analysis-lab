@@ -260,8 +260,8 @@ def render_index(runs: list[tuple[str, str, str, dict, str]]) -> str:
         "Um alerta é um indício para investigação, não uma confirmação de ataque.</div>"
         + _table(["Cenário", "Descrição", "AUTH-001", "AUTH-003", "Conferência com o esperado"],
                  rows)
-        + "<p>Depois de abrir um relatório, leia o README do cenário em <code>scenarios/</code>, "
-          "responda às perguntas orientadoras e só então consulte o gabarito.</p>"
+                + "<p>Antes de consultar o gabarito, leia o contexto e responda às perguntas "
+                    "orientadoras incluídas com os arquivos do cenário.</p>"
     )
     return ('<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8">'
             '<meta name="viewport" content="width=device-width,initial-scale=1">'

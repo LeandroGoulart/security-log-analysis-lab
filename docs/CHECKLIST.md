@@ -18,9 +18,18 @@ Esses itens ficam como resumo, não como tarefas abertas. As decisões sobre dup
 - Publicado em `origin/main`; o hash remoto foi confirmado igual ao local.
 - `.vscode/settings.json` permaneceu somente local e não foi incluído.
 
+## Incremento concluído: aplicação instalável e proteção de dados
+
+- Pacote migrado para `src/authlab/`; configuração padrão e cenários são recursos empacotados.
+- Build setuptools, descoberta de pacotes, dados do wheel e comando console `authlab` configurados.
+- Saídas de rejeição e mensagens de erro minimizadas; entradas e saídas privadas cobertas pelo `.gitignore`.
+- Links da documentação atualizados para o novo layout.
+- Instalação editável no `.venv`; 87 testes passaram e `authlab.exe demo --strict` conferiu os cenários.
+- Wheel instalado num ambiente temporário fora do checkout; `authlab demo --strict` encontrou os recursos empacotados.
+- README e instruções atualizados com o fluxo de instalação real.
+
 ## Próximo incremento
 
-- [ ] Preparar uma estrutura Python instalável com layout `src/`, mantendo os comandos do README e cobrindo a mudança com testes.
 - [ ] Planejar melhorias seguintes em issues/commits pequenos, sem misturar regras futuras com a v1.
 
 ## Roadmap posterior
@@ -40,6 +49,7 @@ Esses itens estão fora da primeira versão; não devem ser descritos como imple
 |---|---|---|---|
 | 2026-09-25 | Inspeção integral, correção de vínculo AUTH-003, convenção de GitHub e revisão do checklist. | 87 testes passaram e a demo estrita conferiu os três cenários no Windows com Python 3.13; instalação repetida no `.venv`. | Publicar o marco v1. |
 | 2026-09-25 | Marco v1 publicado em `origin/main` como `7b0928b`. | `git ls-remote` confirmou o mesmo hash; workspace sincronizado, com `.vscode/settings.json` somente local. | Preparar o próximo incremento: layout Python instalável `src/`. |
+| 2026-09-25 | Aplicação migrada para `src/`, CLI instalável, recursos incluídos no wheel e rejeições minimizadas. | 87 testes passaram; demo estrita passou no venv editável e no wheel instalado fora do checkout; links Markdown válidos. | Publicar este incremento em uma etapa separada e então escolher a próxima melhoria. |
 
 ## Como atualizar este checklist
 

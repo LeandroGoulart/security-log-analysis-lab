@@ -173,9 +173,9 @@ def write_outputs(r: RunResult, out_dir: str | Path) -> dict[str, Path]:
 
     from .events import REQUIRED_COLUMNS
     _write_csv(paths["rejected"],
-               ["source_file", "source_line", "reasons"] + [f"raw_{c}" for c in REQUIRED_COLUMNS],
+               ["source_file", "source_line", "reasons"],
                ([x.source_file, x.source_line, " | ".join(x.reasons)]
-                + [x.raw.get(c, "") for c in REQUIRED_COLUMNS] for x in r.parsed.rejected))
+                for x in r.parsed.rejected))
 
     _write_csv(paths["duplicates"],
                ["source_file", "source_line", "duplicate_of_event_uid", "first_source_line"],

@@ -33,15 +33,15 @@ Pré-requisitos: **Python 3.10 ou superior** ([python.org](https://www.python.or
 git clone https://github.com/LeandroGoulart/security-log-analysis-lab.git
 cd security-log-analysis-lab
 py -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
-.\.venv\Scripts\python.exe -m authlab demo --open
+.\.venv\Scripts\python.exe -m pip install -e ".[dev]"
+.\.venv\Scripts\authlab.exe demo --open
 ```
 
 - Se o comando `py` não existir, use `python -m venv .venv`.
-- Os comandos chamam `.\.venv\Scripts\python.exe` diretamente, sem ativar o ambiente, para evitar o bloqueio de scripts do PowerShell (`Activate.ps1`).
+- O executável `authlab.exe` é chamado diretamente de `.venv\Scripts`, sem ativar o ambiente nem depender de `Activate.ps1`.
 - `--open` abre o índice no navegador padrão. Sem ele, abra `output\demo\index.html` manualmente.
 
-> **Estado da verificação:** no Windows com Python 3.13, as dependências foram instaladas em `.venv`, os 87 testes passaram e `demo --strict` conferiu os três cenários. Veja [Pendências](#limitações-e-pendências).
+> **Estado da verificação:** no Windows com Python 3.13, a instalação editável e os 87 testes passaram. Também foi construído e instalado um wheel em ambiente temporário fora do checkout; `authlab demo --strict` conferiu os três cenários.
 
 ### Exemplo de resultado
 
@@ -66,11 +66,11 @@ Em seguida vêm: o que foi observado, por que a regra disparou, explicações po
 
 | Cenário | Lição | Alertas |
 |---|---|---|
-| [1 – Erro de digitação](scenarios/01-erro-digitacao/README.md) | Abaixo do limiar; qualidade de dados; "sem alerta" com cobertura | nenhum |
-| [2 – Acesso suspeito](scenarios/02-acesso-suspeito/README.md) | Falhas + sucesso de origem não reconhecida | AUTH-001 + AUTH-003 |
-| [3 – Credencial de serviço](scenarios/03-credencial-servico/README.md) | A regra funciona conforme a especificação e ainda assim alerta sobre atividade legítima | AUTH-001 + AUTH-003 |
+| [1 – Erro de digitação](src/authlab/resources/scenarios/01-erro-digitacao/README.md) | Abaixo do limiar; qualidade de dados; "sem alerta" com cobertura | nenhum |
+| [2 – Acesso suspeito](src/authlab/resources/scenarios/02-acesso-suspeito/README.md) | Falhas + sucesso de origem não reconhecida | AUTH-001 + AUTH-003 |
+| [3 – Credencial de serviço](src/authlab/resources/scenarios/03-credencial-servico/README.md) | A regra funciona conforme a especificação e ainda assim alerta sobre atividade legítima | AUTH-001 + AUTH-003 |
 
-Cada cenário tem contexto, CSV, perguntas orientadoras, resultado esperado, contexto de investigação (fictício, externo aos eventos) e gabarito separado. Veja [como estudar os cenários](scenarios/README.md).
+Cada cenário tem contexto, CSV, perguntas orientadoras, resultado esperado, contexto de investigação (fictício, externo aos eventos) e gabarito separado. Veja [como estudar os cenários](src/authlab/resources/scenarios/README.md).
 
 ## Regras (resumo)
 
@@ -81,7 +81,7 @@ A chave de correlação das duas regras é **domínio + conta + IP de origem + h
 | **AUTH-001** – Falhas repetidas | ≥ 5 eventos 4625 com a mesma chave em até 10 min (limite inclusivo). Um alerta por episódio | tentativas distribuídas entre origens, contas ou destinos; ataques mais lentos que a janela |
 | **AUTH-003** – Sucesso após falhas | 4624 com a mesma chave, depois da falha que completou a AUTH-001 e em até 30 min após a última falha | sucessos com chave diferente; sucesso no mesmo segundo do disparo |
 
-Detalhes (empates, eventos fora de ordem, alertas repetidos, campos ausentes): [docs/regras.md](docs/regras.md). Os parâmetros ficam em [`config/rules.yaml`](config/rules.yaml), com validação e mensagens de erro em português.
+Detalhes (empates, eventos fora de ordem, alertas repetidos, campos ausentes): [docs/regras.md](docs/regras.md). Os parâmetros padrão empacotados ficam em [`src/authlab/resources/config/rules.yaml`](src/authlab/resources/config/rules.yaml), com validação e mensagens de erro em português.
 
 ## Formato de entrada
 
@@ -130,9 +130,9 @@ Os testes cobrem: limiar exato e abaixo dele, limites de janela, eventos fora de
 ## Estrutura
 
 ```
-authlab/            código (config, events, rules, explain, report, pipeline, CLI)
-config/             rules.yaml e configurações do exercício de calibração
-scenarios/          3 cenários didáticos (CSV, perguntas, contexto, gabarito)
+src/authlab/        aplicação instalável (código e recursos empacotados)
+config/exercicios/  configurações do exercício de calibração
+src/authlab/resources/scenarios/  3 cenários didáticos (CSV, perguntas, contexto, gabarito)
 data/samples/       dataset exploratório fictício (fora da demonstração)
 docs/               guia, checklist, formato, regras, investigação, ficha, calibração, decisões, referências
 tests/              testes pytest
@@ -141,13 +141,14 @@ output/             saídas geradas (ignorado pelo Git)
 
 ## Segurança dos dados
 
-- Só entram no repositório dados **fictícios**. `data/raw/`, `data/processed/`, `output/`, `*.evtx` e `*.pbix` estão no `.gitignore`.
-- As saídas (CSV, HTML, JSON) **reproduzem os dados de entrada**. Com logs reais, elas contêm contas, hosts e IPs internos, e o mesmo vale para dashboards e capturas de tela feitos a partir delas. Não publique esses arquivos sem sanitização.
-- O relatório exibe o caminho da configuração de forma relativa, para não expor a estrutura de pastas local.
+- Só entram no repositório dados **fictícios**. Pastas `data/raw/`, `data/processed/`, `data/real/`, `data/private/`, `inputs/`, `output/`, relatórios, logs, EVTX, credenciais e `.vscode/` estão no `.gitignore`.
+- `rejected.csv` guarda arquivo, linha e motivo, sem copiar valores inválidos da entrada. Os demais artefatos de análise (eventos válidos, alertas, evidências e HTML) podem conter contas, hosts e IPs.
+- Mantenha entradas reais e saídas em pastas ignoradas, confira `git status` antes de publicar e não force arquivos sensíveis com `git add -f`. Dashboards e capturas de tela também podem expor esses dados.
+- A aplicação mostra apenas o nome do arquivo de entrada, não o caminho local completo. Isso reduz exposição acidental, mas não anonimiza os relatórios.
 
 ## Limitações e pendências
 
-- A instalação em `.venv`, os testes e a demonstração foram verificados no Windows com Python 3.13; outras versões e ambientes ainda não foram verificadas nesta sessão.
+- A instalação editável e a instalação do wheel foram verificadas no Windows com Python 3.13. Outros sistemas operacionais e versões de Python não foram verificados nesta etapa.
 - Formato de entrada próprio; sem importação de dados reais do Windows.
 - Correlação restrita à chave completa; sem detecção de tentativas distribuídas nem de ataques lentos.
 - Interpretação apenas dos códigos de falha documentados na tabela do evento 4625.
