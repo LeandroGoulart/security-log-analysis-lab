@@ -34,6 +34,7 @@ Esses itens ficam como resumo, não como tarefas abertas. As decisões sobre dup
 - README principal reestruturado com capa do índice da demonstração e imagem de evidência do relatório AUTH-001/AUTH-003.
 - Capturas geradas somente com os cenários fictícios incluídos no projeto.
 - Links relativos conferidos; capa 1440×500 e evidência 1440×1750.
+- Commit `1282d56` publicado em `origin/main`; hash remoto confirmado.
 
 ## Próximo incremento
 
@@ -57,7 +58,7 @@ Esses itens estão fora da primeira versão; não devem ser descritos como imple
 | 2026-09-25 | Inspeção integral, correção de vínculo AUTH-003, convenção de GitHub e revisão do checklist. | 87 testes passaram e a demo estrita conferiu os três cenários no Windows com Python 3.13; instalação repetida no `.venv`. | Publicar o marco v1. |
 | 2026-09-25 | Marco v1 publicado em `origin/main` como `7b0928b`. | `git ls-remote` confirmou o mesmo hash; workspace sincronizado, com `.vscode/settings.json` somente local. | Preparar o próximo incremento: layout Python instalável `src/`. |
 | 2026-09-25 | Aplicação instalável e proteções de dados publicadas como `5fe3a17`. | 87 testes passaram; demo estrita passou no venv editável e no wheel instalado fora do checkout; `origin/main` confirmado no mesmo hash. | Escolher a próxima melhoria do roadmap em um incremento pequeno. |
-| 2026-09-25 | README principal refeito com capa e evidência visual dos relatórios. | Links locais válidos; ambas as imagens verificadas visualmente e usam dados fictícios. | Publicar a atualização documental e escolher a próxima melhoria. |
+| 2026-09-25 | README principal refeito com capa e evidência visual dos relatórios; publicado como `1282d56`. | Links locais válidos; imagens verificadas visualmente com dados fictícios; hash remoto confirmado. | Escolher a próxima melhoria do roadmap em um incremento pequeno. |
 
 ## Como atualizar este checklist
 
