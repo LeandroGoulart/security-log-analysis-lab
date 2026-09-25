@@ -11,16 +11,16 @@ Este documento é o registro de trabalho do projeto. Atualize o estado após cad
 
 Esses itens ficam como resumo, não como tarefas abertas. As decisões sobre duplicatas e diferenças em relação ao planejamento estão registradas em [decisoes.md](decisoes.md).
 
-## Etapa atual: preparar publicação
+## Marco atual: v1 publicada
 
 - [x] Instalar dependências em `.venv`, executar `pytest` e `python -m authlab demo --strict` no Windows com Python 3.13.
-- [ ] Revisar `git status` e confirmar que somente arquivos pretendidos serão publicados; manter `.vscode/settings.json` fora do commit.
-- [ ] Criar um commit do marco v1 usando o padrão em [PADRAO-GITHUB.md](PADRAO-GITHUB.md).
-- [ ] Enviar o marco para `origin/main` e confirmar que o GitHub mostra a documentação e o código.
+- Commit `7b0928b`: `feat: publica primeira versão do laboratório`.
+- Publicado em `origin/main`; o hash remoto foi confirmado igual ao local.
+- `.vscode/settings.json` permaneceu somente local e não foi incluído.
 
-## Próximas etapas de implementação
+## Próximo incremento
 
-- [ ] Avaliar o empacotamento Python com layout `src/` e instalação da ferramenta; manter os comandos documentados funcionando.
+- [ ] Preparar uma estrutura Python instalável com layout `src/`, mantendo os comandos do README e cobrindo a mudança com testes.
 - [ ] Planejar melhorias seguintes em issues/commits pequenos, sem misturar regras futuras com a v1.
 
 ## Roadmap posterior
@@ -38,7 +38,8 @@ Esses itens estão fora da primeira versão; não devem ser descritos como imple
 
 | Data | Etapa concluída | Verificação | Próximo passo |
 |---|---|---|---|
-| 2026-09-25 | Inspeção integral, correção de vínculo AUTH-003, convenção de GitHub e revisão do checklist. | 87 testes passaram e a demo estrita conferiu os três cenários no Windows com Python 3.13; instalação repetida no `.venv`. | Revisar arquivos do commit e publicar o marco v1. |
+| 2026-09-25 | Inspeção integral, correção de vínculo AUTH-003, convenção de GitHub e revisão do checklist. | 87 testes passaram e a demo estrita conferiu os três cenários no Windows com Python 3.13; instalação repetida no `.venv`. | Publicar o marco v1. |
+| 2026-09-25 | Marco v1 publicado em `origin/main` como `7b0928b`. | `git ls-remote` confirmou o mesmo hash; workspace sincronizado, com `.vscode/settings.json` somente local. | Preparar o próximo incremento: layout Python instalável `src/`. |
 
 ## Como atualizar este checklist
 
