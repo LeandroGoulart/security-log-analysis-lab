@@ -1,33 +1,28 @@
-# Security Log Analysis Lab: Investigação de autenticação Windows
+# Security Log Analysis Lab
 
-Laboratório de estudo de **SOC / Blue Team** para interpretar eventos de autenticação do Windows (`4624` e `4625`), correlacioná-los, investigar hipóteses e comunicar conclusões. O público inclui pessoas sem formação técnica.
+![Capa da demonstração do Security Log Analysis Lab: índice dos três cenários fictícios](docs/images/lab-cover.png)
 
-O projeto implementa, de forma transparente e testável, uma fatia do que um SIEM faz:
+Laboratório didático de **SOC / Blue Team** para praticar investigação de eventos de autenticação do Windows. O foco é entender o que os registros mostram, por que uma regra alerta e quais perguntas ainda precisam ser respondidas.
 
+> Dados inteiramente fictícios. Um alerta é um indício para investigação, não uma confirmação de ataque. Os limiares são exemplos didáticos, não valores recomendados para ambientes reais.
+
+## O que o projeto faz
+
+```text
+CSV documentado → validação e normalização → AUTH-001/AUTH-003 → evidências → relatório HTML local
 ```
-CSV documentado → validação e normalização → detecção → evidências → relatório HTML local
-```
 
-Ele **não** substitui um SIEM: não há coleta contínua, armazenamento em escala nem resposta automática. O foco está na lógica: por que uma regra dispara, quais eventos a sustentam, quando o alerta é ruído e como explicar isso a quem decide.
+O participante pratica leitura dos eventos `4624` (logon bem-sucedido) e `4625` (falha), correlação temporal, avaliação de falsos positivos e comunicação de conclusões. O laboratório não é um SIEM: não coleta eventos continuamente, não bloqueia acessos e não usa banco de dados.
 
-> **Iniciante?** Comece pelo [guia do projeto](docs/README.md). O andamento está no [checklist](docs/CHECKLIST.md).
+## Evidência visual
 
-> Todos os dados incluídos são **fictícios**. Os limiares padrão são **didáticos** e não servem para nenhum ambiente real sem calibração.
+O relatório abaixo foi gerado pelo cenário fictício **Acesso suspeito**. Ele mostra os contadores de qualidade, os alertas AUTH-001/AUTH-003, a explicação, as hipóteses e a trilha de eventos de origem.
 
-## Competências praticadas
-
-| Competência | Onde aparece |
-|---|---|
-| Interpretar logs de autenticação Windows | Status/SubStatus e LogonType com base na documentação da Microsoft ([referências](docs/referencias.md)) |
-| Triagem e correlação | AUTH-001 e AUTH-003 com chave de correlação explícita ([regras](docs/regras.md)) |
-| Investigar hipóteses e falsos positivos | 3 cenários com perguntas e gabarito, incluindo um alerta sobre atividade legítima |
-| Decidir com base em evidências | Cada alerta aponta para `event_uid` e `arquivo:linha` de origem |
-| Automação básica com Python | Pipeline sem frameworks, com 87 testes |
-| Comunicação | Resumo em linguagem simples por alerta e [ficha de investigação](docs/ficha-investigacao.md) com resumo para gestor |
+![Evidência do relatório HTML: alerta AUTH-001/AUTH-003 com dados fictícios e eventos rastreáveis](docs/images/evidence-auth-alert.png)
 
 ## Início rápido (Windows / PowerShell)
 
-Pré-requisitos: **Python 3.10 ou superior** ([python.org](https://www.python.org/downloads/); marque "Add python.exe to PATH" na instalação) e Git. Não precisa de privilégios de administrador.
+Requisitos: Python 3.10 ou superior e Git. Não precisa de privilégios administrativos.
 
 ```powershell
 git clone https://github.com/LeandroGoulart/security-log-analysis-lab.git
@@ -37,138 +32,61 @@ py -m venv .venv
 .\.venv\Scripts\authlab.exe demo --open
 ```
 
-- Se o comando `py` não existir, use `python -m venv .venv`.
-- O executável `authlab.exe` é chamado diretamente de `.venv\Scripts`, sem ativar o ambiente nem depender de `Activate.ps1`.
-- `--open` abre o índice no navegador padrão. Sem ele, abra `output\demo\index.html` manualmente.
+Se `py` não estiver disponível, use `python -m venv .venv`. `authlab.exe` abre o índice HTML no navegador; as saídas são criadas em `output\demo\`.
 
-> **Estado da verificação:** no Windows com Python 3.13, a instalação editável e os 87 testes passaram. Também foi construído e instalado um wheel em ambiente temporário fora do checkout; `authlab demo --strict` conferiu os três cenários.
+Verificado no Windows com Python 3.13: instalação editável, **87 testes aprovados**, demo estrita dos três cenários e instalação/executação de wheel em ambiente temporário fora do repositório.
 
-### Exemplo de resultado
+## Cenários demonstrados
 
-```
-[02-acesso-suspeito] Cenário 2 – Acesso suspeito
-  Registros: lidos 18 | válidos 18 | rejeitados 0 | duplicados removidos 0 | possíveis duplicados mantidos 0
-  AUTH-001: candidatos 13 | elegíveis 13 | alertas 1
-    1 alerta(s). Avaliados 13 de 13 eventos candidatos.
-  AUTH-003: candidatos 5 | elegíveis 5 | alertas 1
-    1 alerta(s). Avaliados 5 de 5 eventos candidatos.
-  Conferência: conforme o esperado
-  Relatório: output/demo/02-acesso-suspeito/report.html
-```
-
-No relatório, cada alerta traz:
-
-> **Em linguagem simples:** Foram registradas 12 falhas de autenticação para a conta joao.silva em 5 min 1 s, seguidas de um logon bem-sucedido com os mesmos campos de correlação. A sequência pode ter uma explicação legítima ou indicar tentativa de acesso indevido. É necessário verificar o contexto antes de concluir.
-
-Em seguida vêm: o que foi observado, por que a regra disparou, explicações possíveis, o que verificar e a linha do tempo com as evidências.
-
-## Cenários
-
-| Cenário | Lição | Alertas |
+| Cenário | O que ensina | Resultado padrão |
 |---|---|---|
-| [1 – Erro de digitação](src/authlab/resources/scenarios/01-erro-digitacao/README.md) | Abaixo do limiar; qualidade de dados; "sem alerta" com cobertura | nenhum |
-| [2 – Acesso suspeito](src/authlab/resources/scenarios/02-acesso-suspeito/README.md) | Falhas + sucesso de origem não reconhecida | AUTH-001 + AUTH-003 |
-| [3 – Credencial de serviço](src/authlab/resources/scenarios/03-credencial-servico/README.md) | A regra funciona conforme a especificação e ainda assim alerta sobre atividade legítima | AUTH-001 + AUTH-003 |
+| [Erro de digitação](src/authlab/resources/scenarios/01-erro-digitacao/README.md) | Poucas falhas abaixo do limiar; dados incompletos não significam ausência de atividade | Sem alertas |
+| [Acesso suspeito](src/authlab/resources/scenarios/02-acesso-suspeito/README.md) | Falhas repetidas seguidas de sucesso; investigar origem e contexto | AUTH-001 + AUTH-003 |
+| [Credencial de serviço desatualizada](src/authlab/resources/scenarios/03-credencial-servico/README.md) | Uma regra pode estar correta e ainda alertar sobre uma causa operacional legítima | AUTH-001 + AUTH-003 |
 
-Cada cenário tem contexto, CSV, perguntas orientadoras, resultado esperado, contexto de investigação (fictício, externo aos eventos) e gabarito separado. Veja [como estudar os cenários](src/authlab/resources/scenarios/README.md).
+Todos incluem CSV, contexto fictício, perguntas e gabarito separado. Veja o [guia de estudo dos cenários](src/authlab/resources/scenarios/README.md).
 
-## Regras (resumo)
+## Regras
 
-A chave de correlação das duas regras é **domínio + conta + IP de origem + host que registrou**.
+As duas regras usam a mesma chave de correlação: **domínio + conta + IP válido de origem + host que registrou o evento**. Valores padrão configuráveis estão em [rules.yaml](src/authlab/resources/config/rules.yaml) e são apenas didáticos.
 
-| Regra | Dispara quando | Não cobre |
+| Regra | Resumo | Limite conhecido |
 |---|---|---|
-| **AUTH-001** – Falhas repetidas | ≥ 5 eventos 4625 com a mesma chave em até 10 min (limite inclusivo). Um alerta por episódio | tentativas distribuídas entre origens, contas ou destinos; ataques mais lentos que a janela |
-| **AUTH-003** – Sucesso após falhas | 4624 com a mesma chave, depois da falha que completou a AUTH-001 e em até 30 min após a última falha | sucessos com chave diferente; sucesso no mesmo segundo do disparo |
+| **AUTH-001** | Alerta ao atingir 5 falhas `4625` em até 10 minutos; um alerta por episódio | Não correlaciona origens, contas ou hosts diferentes; ataques lentos podem passar |
+| **AUTH-003** | Relaciona um `4624` posterior à sequência AUTH-001, em até 30 minutos | Exige a mesma chave completa; horário igual não estabelece ordem |
 
-Detalhes (empates, eventos fora de ordem, alertas repetidos, campos ausentes): [docs/regras.md](docs/regras.md). Os parâmetros padrão empacotados ficam em [`src/authlab/resources/config/rules.yaml`](src/authlab/resources/config/rules.yaml), com validação e mensagens de erro em português.
+Veja a [especificação das regras](docs/regras.md) e a [documentação do CSV](docs/formato-csv.md). O formato de entrada é próprio do projeto: não é CSV genérico do Event Viewer e não há suporte a EVTX.
 
-## Formato de entrada
+## Artefatos gerados
 
-CSV próprio, com 12 colunas: `event_record_id, timestamp, event_id, channel, host, user, domain, src_ip, logon_type, status, sub_status, outcome`. O timestamp precisa ter fuso explícito. **Não** é o CSV do Event Viewer e não há leitura de EVTX. Especificação, validações e estratégia de deduplicação: [docs/formato-csv.md](docs/formato-csv.md).
+Cada execução cria relatório HTML autocontido e arquivos CSV/JSON com eventos normalizados, alertas, relação alerta-evidência, rejeições, duplicatas e resumo. As rejeições guardam referência e motivo, sem copiar valores brutos inválidos.
 
-Para analisar outro arquivo no mesmo formato:
+Para analisar outro CSV já no formato documentado:
 
 ```powershell
 .\.venv\Scripts\python.exe -m authlab analyze --input data\samples\auth_events.csv --out output\exploratorio
 ```
 
-## Saídas
-
-Cada execução gera, em sua pasta de saída:
-
-| Arquivo | Conteúdo |
-|---|---|
-| `report.html` | Relatório autocontido (sem recursos externos; conteúdo dos dados escapado) |
-| `events_normalized.csv` | Eventos válidos normalizados, com `event_uid` e `arquivo:linha` |
-| `alerts.csv` | Alertas, com vínculo `parent_alert_id` |
-| `alert_evidence.csv` | Relação alerta → eventos de evidência (inclui o evento de disparo) |
-| `rejected.csv` | Linhas rejeitadas, com motivo e número da linha |
-| `duplicates.csv` | Duplicatas removidas e a primeira ocorrência |
-| `summary.json` | Contagens de qualidade, elegibilidade por regra e alertas |
-
-## Como investigar um alerta
-
-1. Leia **por que a regra disparou** e identifique o evento de disparo.
-2. Levante os fatos: quantidade, ritmo, Status/SubStatus, LogonType, sucesso.
-3. Confira a **qualidade dos dados**: rejeições e eventos não elegíveis reduzem a cobertura.
-4. Formule hipóteses legítimas e maliciosas. Lembre que IP não é pessoa e conta não é pessoa.
-5. Liste o contexto que falta (inventário, mudanças, confirmação do titular).
-6. Preencha a [ficha de investigação](docs/ficha-investigacao.md) com uma conclusão, que pode ser "inconclusiva", e um resumo para gestor.
-
-Roteiro completo: [docs/investigacao.md](docs/investigacao.md). Exercício de calibração de limiar: [docs/calibracao.md](docs/calibracao.md).
+Para explorar um alerta, use o [roteiro de investigação](docs/investigacao.md) e preencha a [ficha](docs/ficha-investigacao.md). O [exercício de calibração](docs/calibracao.md) mostra como alterar o limiar muda os resultados fictícios.
 
 ## Testes
 
 ```powershell
-.\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
 .\.venv\Scripts\python.exe -m pytest
 ```
 
-Os testes cobrem: limiar exato e abaixo dele, limites de janela, eventos fora de ordem, timestamps iguais, chaves diferentes, duplicatas e conflitos de EventRecordID, campos ausentes, timestamp e configuração inválidos, sucesso antes/depois/fora do intervalo, prevenção de alertas redundantes, rastreabilidade das evidências, escape de HTML, proteção contra fórmulas em CSV e a execução completa dos três cenários com os resultados esperados.
+Os testes cobrem limites e ordenação temporal, campos/chaves ausentes, deduplicação, rejeições, rastreabilidade, prevenção de alertas repetidos, segurança do HTML/CSV e execução dos três cenários. Instalação e dependências de desenvolvimento: `python -m pip install -e ".[dev]"`.
 
-## Estrutura
+## Privacidade dos dados
 
-```
-src/authlab/        aplicação instalável (código e recursos empacotados)
-config/exercicios/  configurações do exercício de calibração
-src/authlab/resources/scenarios/  3 cenários didáticos (CSV, perguntas, contexto, gabarito)
-data/samples/       dataset exploratório fictício (fora da demonstração)
-docs/               guia, checklist, formato, regras, investigação, ficha, calibração, decisões, referências
-tests/              testes pytest
-output/             saídas geradas (ignorado pelo Git)
-```
+- Os samples e cenários versionados são fictícios. O `.gitignore` exclui pastas de entrada real, relatórios/saídas, EVTX, logs, credenciais e configurações `.vscode/`.
+- Eventos válidos, alertas e relatórios podem conter contas, hosts e IPs. As saídas padrão ficam em `output/`, que é ignorado pelo Git; não publique relatórios, dashboards ou capturas feitos com dados reais.
+- Antes de publicar, confira `git status`. O ignore reduz acidentes, mas não anonimiza arquivos nem impede `git add -f`.
 
-## Segurança dos dados
+## Limitações e próximos passos
 
-- Só entram no repositório dados **fictícios**. Pastas `data/raw/`, `data/processed/`, `data/real/`, `data/private/`, `inputs/`, `output/`, relatórios, logs, EVTX, credenciais e `.vscode/` estão no `.gitignore`.
-- `rejected.csv` guarda arquivo, linha e motivo, sem copiar valores inválidos da entrada. Os demais artefatos de análise (eventos válidos, alertas, evidências e HTML) podem conter contas, hosts e IPs.
-- Mantenha entradas reais e saídas em pastas ignoradas, confira `git status` antes de publicar e não force arquivos sensíveis com `git add -f`. Dashboards e capturas de tela também podem expor esses dados.
-- A aplicação mostra apenas o nome do arquivo de entrada, não o caminho local completo. Isso reduz exposição acidental, mas não anonimiza os relatórios.
+O projeto processa arquivos em lote, não confirma comprometimento e não detecta tentativas distribuídas entre várias origens/contas/hosts. Não importa logs reais do Windows nem EVTX; não implementa resposta automática.
 
-## Limitações e pendências
+Roadmap: AUTH-002 (padrão compatível com password spraying), AUTH-004 (fora de horário), importação validada de dados Windows, Sigma, Power BI e comparação com um SIEM.
 
-- A instalação editável e a instalação do wheel foram verificadas no Windows com Python 3.13. Outros sistemas operacionais e versões de Python não foram verificados nesta etapa.
-- Formato de entrada próprio; sem importação de dados reais do Windows.
-- Correlação restrita à chave completa; sem detecção de tentativas distribuídas nem de ataques lentos.
-- Interpretação apenas dos códigos de falha documentados na tabela do evento 4625.
-- Sem contexto externo (inventário, DHCP, VPN, mudanças): a conclusão depende do analista.
-- Métricas dos cenários fictícios **não** representam desempenho em produção.
-
-Decisões e premissas registradas: [docs/decisoes.md](docs/decisoes.md).
-
-## Roadmap
-
-Nada abaixo está implementado.
-
-- [ ] **AUTH-002**: padrão compatível com password spraying (mesma origem, várias contas)
-- [ ] **AUTH-004**: logon fora do horário configurado
-- [ ] Importação validada de dados Windows reais (formato a definir e testar)
-- [ ] Suporte a EVTX
-- [ ] Regras em formato Sigma e validação das correlações no destino
-- [ ] Dashboard Power BI
-- [ ] Comparação dos resultados com um SIEM de mercado (Splunk, Wazuh ou Elastic)
-
----
-
-Projeto de estudo e portfólio em Blue Team / Detection Engineering. Dados inteiramente fictícios.
+Para começar pelo básico, leia o [guia para iniciantes](docs/README.md). O andamento por etapas fica no [checklist](docs/CHECKLIST.md) e as [decisões de projeto](docs/decisoes.md) explicam as premissas.
