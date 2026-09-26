@@ -20,6 +20,26 @@ O relatório abaixo foi gerado pelo cenário fictício **Acesso suspeito**. Ele 
 
 ![Evidência do relatório HTML: alerta AUTH-001/AUTH-003 com dados fictícios e eventos rastreáveis](docs/images/evidence-auth-alert.png)
 
+## Por que este projeto faz parte do meu portfólio
+
+Este é um **projeto pessoal/laboratório**, não uma experiência profissional com SOC ou
+resposta a incidentes em produção. Ele foi construído para transformar minha experiência
+profissional em suporte, IAM, operações e governança em evidência prática de segurança
+defensiva:
+
+- investiga autenticação em vez de apenas contar eventos;
+- valida a qualidade dos dados antes de concluir que "não houve alerta";
+- explica por que cada regra disparou e aponta para os eventos de origem;
+- separa fato observado, hipótese e contexto ainda necessário;
+- documenta falsos positivos, limites e próximos passos;
+- é reproduzível por configuração, testes automatizados e dados fictícios.
+
+O projeto demonstra fundamentos de **SOC, Blue Team, correlação de eventos, detection
+engineering, triagem de incidentes, rastreabilidade e comunicação técnica**. Ele não afirma
+experiência com SIEM comercial, logs EVTX em produção, cloud security ou resposta operacional
+real. O mapa completo entre evidências, gaps e próximos incrementos está em
+[Posicionamento para o LinkedIn](docs/linkedin-destaque.md).
+
 ## Início rápido (Windows / PowerShell)
 
 Requisitos: Python 3.10 ou superior e Git. Não precisa de privilégios administrativos.

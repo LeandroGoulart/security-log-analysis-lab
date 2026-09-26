@@ -258,10 +258,30 @@ def render_index(runs: list[tuple[str, str, str, dict, str]]) -> str:
         "<h1>Security Log Analysis Lab – Demonstração</h1>"
         '<div class="notice">Dados inteiramente fictícios. Limiares didáticos. '
         "Um alerta é um indício para investigação, não uma confirmação de ataque.</div>"
+        '<section class="card"><h2>O que este projeto evidencia</h2>'
+        "<p>Laboratório de SOC/Blue Team para transformar eventos de autenticação em uma "
+        "investigação reproduzível, com contexto, limitações e rastreabilidade.</p>"
+        "<ul><li>Validação, normalização e qualidade dos dados antes da detecção.</li>"
+        "<li>Detecção explicável de falhas repetidas e sucesso após falhas.</li>"
+        "<li>Evidência alerta → evento de origem, incluindo arquivo e linha.</li>"
+        "<li>Triagem de falso positivo e hipóteses legítimas versus suspeitas.</li>"
+        "<li>Relatório HTML, CSV/JSON, configuração versionada e testes automatizados.</li></ul>"
+        "<p class=\"muted\"><strong>Escopo:</strong> projeto pessoal/laboratório com dados fictícios. "
+        "Não representa experiência profissional com SOC, SIEM ou resposta a incidentes em produção.</p>"
+        "</section>"
         + _table(["Cenário", "Descrição", "AUTH-001", "AUTH-003", "Conferência com o esperado"],
                  rows)
                 + "<p>Antes de consultar o gabarito, leia o contexto e responda às perguntas "
                     "orientadoras incluídas com os arquivos do cenário.</p>"
+        + '<section class="card"><h2>Competências demonstradas</h2>'
+        + "<p><span class=\"tag\">SOC / Blue Team</span> "
+        + "<span class=\"tag\">Event Correlation</span> "
+        + "<span class=\"tag\">Detection Engineering</span> "
+        + "<span class=\"tag\">Incident Triage</span> "
+        + "<span class=\"tag\">Data Quality</span> "
+        + "<span class=\"tag\">Python</span></p>"
+        + "<p>O projeto complementa experiência profissional em suporte, IAM, operações e "
+        + "governança com uma evidência prática de investigação defensiva.</p></section>"
     )
     return ('<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8">'
             '<meta name="viewport" content="width=device-width,initial-scale=1">'

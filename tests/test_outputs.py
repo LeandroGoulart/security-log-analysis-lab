@@ -84,7 +84,11 @@ def test_there_are_three_scenarios():
 def test_demo_command_runs_end_to_end(tmp_path, capsys):
     out = tmp_path / "demo"
     assert main(["demo", "--out", str(out), "--strict"]) == 0
-    assert (out / "index.html").is_file()
+    index = out / "index.html"
+    assert index.is_file()
+    index_html = index.read_text(encoding="utf-8")
+    assert "O que este projeto evidencia" in index_html
+    assert "Não representa experiência profissional" in index_html
     for folder, _ in SCENARIOS:
         summary = json.loads((out / folder.name / "summary.json").read_text(encoding="utf-8"))
         assert summary["records"]["read"] > 0
