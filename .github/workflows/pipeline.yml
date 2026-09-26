@@ -1,0 +1,151 @@
+# .github/workflows/pipeline.yml
+#
+# O que este pipeline faz, em ordem:
+#   1. test   -> roda os 87 testes e a demo estrita no Linux e no Windows
+#   2. build  -> gera o site (index.html + relatórios) e empacota
+#   3. deploy -> publica o site no GitHub Pages (somente na branch main)
+#
+# Fluxo: push/PR -> test (4 combinações) -> build -> deploy (só main)
+
+name: CI e publicação da demo
+
+# ---------------------------------------------------------------
+# QUANDO rodar (gatilhos)
+# ---------------------------------------------------------------
+on:
+  push:
+    branches: [main]          # todo push na main testa e publica
+  pull_request:
+    branches: [main]          # PR para a main só testa e gera o site (não publica)
+  workflow_dispatch:          # botão "Run workflow" na aba Actions (execução manual)
+
+# ---------------------------------------------------------------
+# PERMISSÕES PADRÃO (menor privilégio)
+# O token automático do GitHub (GITHUB_TOKEN) só consegue LER o repo.
+# Quem precisar de mais pede no próprio job (veja o deploy).
+# ---------------------------------------------------------------
+permissions:
+  contents: read
+
+# Se chegarem dois pushes seguidos no mesmo PR/branch, cancela o antigo.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # =============================================================
+  # JOB 1 - TESTES (o "controle de qualidade")
+  # =============================================================
+  test:
+    name: Testes (${{ matrix.os }}, Python ${{ matrix.python }})
+    runs-on: ${{ matrix.os }}
+
+    # Matriz: o mesmo job roda em 4 combinações ao mesmo tempo.
+    # 3.10 = versão mínima declarada no pyproject.toml
+    # 3.13 = versão que você usa localmente
+    strategy:
+      fail-fast: false        # se uma combinação falhar, as outras continuam (diagnóstico melhor)
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python: ["3.10", "3.13"]
+
+    steps:
+      # Baixa o código do repositório para a máquina virtual (runner).
+      # Actions fixadas por SHA: a tag (v7.0.1) pode ser movida; o SHA não.
+      - name: Baixar o código
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false   # não deixa o token salvo no .git do runner
+
+      - name: Instalar Python ${{ matrix.python }}
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip                              # reaproveita downloads entre execuções
+          cache-dependency-path: pyproject.toml   # cache muda quando as dependências mudam
+
+      - name: Instalar o projeto com dependências de desenvolvimento
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+
+      - name: Rodar os testes
+        run: python -m pytest -q
+
+      # --strict faz a demo retornar erro (código 1) se algum cenário
+      # não gerar os alertas esperados no scenario.json.
+      # É um teste de ponta a ponta: CSV -> regras -> relatório.
+      - name: Rodar a demo estrita (conferência dos 3 cenários)
+        run: python -m authlab demo --strict --out output/ci-check
+
+  # =============================================================
+  # JOB 2 - BUILD DO SITE (a "embalagem")
+  # =============================================================
+  build:
+    name: Gerar site da demo
+    needs: test               # só começa se TODAS as combinações do test passarem
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar o código
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Instalar Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Instalar o projeto
+        run: python -m pip install .
+
+      # Gera index.html + uma pasta por cenário dentro de _site/.
+      # Os links do index são relativos, então funcionam no Pages sem ajuste.
+      - name: Gerar relatórios
+        run: python -m authlab demo --strict --out _site
+
+      # Empacota a pasta _site como artefato do tipo "github-pages".
+      # Em PRs, esse artefato fica disponível para download na aba Actions
+      # (útil para revisar o relatório antes de ir para a main).
+      - name: Empacotar para o GitHub Pages
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: _site
+          retention-days: 7
+
+  # =============================================================
+  # JOB 3 - DEPLOY (a "entrega")
+  # =============================================================
+  deploy:
+    name: Publicar no GitHub Pages
+    needs: build
+    # Só publica em push na main ou execução manual. PR nunca publica.
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+
+    # Único job com permissão extra (menor privilégio):
+    permissions:
+      pages: write            # escrever no GitHub Pages
+      id-token: write         # provar identidade via OIDC (sem senha/chave guardada)
+
+    # Environment "github-pages": registra histórico de deploys e permite
+    # regras de proteção (ex.: só a main pode publicar).
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    # Nunca cancelar um deploy no meio; deploys entram em fila.
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+
+    steps:
+      - name: Configurar Pages
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+
+      - name: Publicar
+        id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
